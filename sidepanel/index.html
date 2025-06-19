@@ -1,0 +1,69 @@
+<!doctype html>
+<html>
+
+<head>
+  <style>
+    .card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 10px;
+      margin: 10px;
+    }
+
+    #summary {
+      font-size: 20px;
+      white-space: pre-wrap; /* Preserves whitespace and line breaks */
+      display: block; /* Ensures it behaves like a block element */
+    }
+
+    .warning {
+      color: #ff6347;
+      border: 1px solid #ff6347;
+      background-color: #ffebee;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input {
+      width: 90%;
+      margin-bottom: 10px;
+    }
+
+    #settingsButton{
+      margin-left: 30px;
+    }
+
+    #settingsSection{
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <button id="getSummaryButton">Get summary</button>
+    <button id="settingsButton">Settings</button>
+  </div>
+
+  <div class="card" id="settingsSection">
+    <h3>Settings:</h3>
+    <label for="litellmUrl">LiteLLM API URL:</label>
+    <input type="text" id="litellmUrl" placeholder="https://api.litellm.com/v1/generate" />
+    <label for="token">API Token:</label>
+    <input type="text" id="token" placeholder="Your LiteLLM API token" />
+    <label for="modelId">Model ID:</label>
+    <input type="text" id="modelId" placeholder="ID of the LiteLLM model to use" />
+    <label for="prompt">Input Prompt:</label>
+    <input type="text" id="prompt" placeholder="Generate short summary of following in simple English" />
+  </div>
+
+  <div class="warning card" hidden id="warning"></div>
+  <div class="card" id="summary">I am ready!</div>
+  <script src="index.js" type="module"></script>
+</body>
+
+</html>
