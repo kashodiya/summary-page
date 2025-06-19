@@ -29,7 +29,7 @@
       margin-bottom: 5px;
     }
 
-    input {
+    input, select {
       width: 90%;
       margin-bottom: 10px;
     }
@@ -42,11 +42,11 @@
       display: none;
     }
 
-    #resetPromptButton{
+    .inline-btn{
       margin-left: 20px;
     }
 
-    #resetPromptButton:hover{
+    .inline-btn:hover{
       cursor: pointer;
       background-color: bisque;
     }
@@ -66,9 +66,10 @@
     <input type="text" id="litellmUrl" placeholder="https://api.litellm.com/v1/generate" />
     <label for="token">API Token:</label>
     <input type="password" id="token" placeholder="Your LiteLLM API token" />
-    <label for="modelId">Model ID:</label>
-    <input type="text" id="modelId" placeholder="ID of the LiteLLM model to use" />
-    <label for="prompt">Input Prompt:<span id="resetPromptButton">(reset)</span></label>
+    <label for="modelId">Model ID:<span class="inline-btn" id="loadModelsButton">(load)</span></label>
+    <!-- <input type="text" id="modelId" placeholder="ID of the LiteLLM model to use" /> -->
+    <select id="modelId" placeholder="ID of the LiteLLM model to use"></select>
+    <label for="prompt">Input Prompt:<span class="inline-btn" id="resetPromptButton">(reset)</span></label>
     <input type="text" id="prompt" placeholder="Generate short summary of following in simple English" />
   </div>
 

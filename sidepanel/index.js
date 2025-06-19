@@ -16,14 +16,20 @@ let speaking = false;
 // Create variables for the form fields
 const litellmUrlInput = document.getElementById('litellmUrl');
 const tokenInput = document.getElementById('token');
-const modelIdInput = document.getElementById('modelId');
+const modelIdDropdown = document.getElementById('modelId');
 const promptInput = document.getElementById('prompt');
+// const modelIdDropdown = document.getElementById("modelId");
 
 
 litellmUrlInput.value = localStorage.getItem('litellmUrl') || '';
 tokenInput.value = localStorage.getItem('token') || '';
-modelIdInput.value = localStorage.getItem('modelId') || '';
+modelIdDropdown.value = localStorage.getItem('modelId') || '';
 promptInput.value = localStorage.getItem('prompt') || "Generate short summary of following in simple English";
+
+const modelsTxt = localStorage.getItem('models');
+// let models;
+let models = JSON.parse(modelsTxt);
+populateModelDropdown()
 
 // Listen for changes in the input fields and update session storage
 litellmUrlInput.addEventListener('input', () => {
@@ -32,17 +38,51 @@ litellmUrlInput.addEventListener('input', () => {
 
 tokenInput.addEventListener('input', () => {
     console.log(`Saving token: ${tokenInput.value}`);
-    
+
     localStorage.setItem('token', tokenInput.value);
 });
 
-modelIdInput.addEventListener('input', () => {
-    localStorage.setItem('modelId', modelIdInput.value);
+modelIdDropdown.addEventListener('change', () => {
+    console.log('Storing model id');
+    localStorage.setItem('modelId', modelIdDropdown.value);
 });
 
 promptInput.addEventListener('input', () => {
     localStorage.setItem('prompt', promptInput.value);
 });
+
+
+
+document.getElementById('loadModelsButton').addEventListener('click', async () => {
+    models = await getModels();
+    console.log({ models });
+
+    localStorage.setItem('models', JSON.stringify(models));
+
+    while (modelIdDropdown.options.length > 0) {
+        modelIdDropdown.remove(0);
+    }    
+    populateModelDropdown();
+});
+
+function populateModelDropdown(){
+    if(!models){
+        console.log('Models not found in local storage');
+        return;
+    }
+    let modelId = localStorage.getItem('modelId');
+    console.log(`Creating model dropdown with value: ${modelId}`);
+    
+    models.data.forEach(function (model) {
+        var option = document.createElement("option");
+        option.value = model.id;
+        option.text = model.id;
+        if (model.id === modelId) {
+            option.selected = true;
+        }        
+        modelIdDropdown.appendChild(option);
+    });
+}
 
 document.getElementById('resetPromptButton').addEventListener('click', async () => {
     promptInput.value = "Generate short summary of following in simple English";
@@ -65,7 +105,7 @@ document.getElementById('textToSpeechButton').addEventListener('click', async ()
     if (speaking) {
         speechSynthesis.cancel();
         speaking = false;
-    }else{
+    } else {
         let text = "";
 
         if (window.getSelection) {
@@ -74,10 +114,10 @@ document.getElementById('textToSpeechButton').addEventListener('click', async ()
             text = document.selection.createRange().text;
         }
 
-        if(text === ""){
+        if (text === "") {
             console.log("Using full summary for speak");
             text = summaryElement.innerHTML;
-        }else{
+        } else {
             console.log("Using selected text for speak");
         }
 
@@ -122,14 +162,14 @@ async function generateSummary(text) {
 
         const litellmUrl = litellmUrlInput.value;
         const token = tokenInput.value;
-        const modelId = modelIdInput.value;
+        const modelId = modelIdDropdown.value;
         const prompt = promptInput.value;
 
 
         // const prompt = "Summarize following text in short and simple English"
 
         console.log("Calling LiteLLM api...");
-        const response = await fetch(litellmUrl, {
+        const response = await fetch(`${litellmUrl}/v1/chat/completions`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${token}`,
@@ -155,7 +195,33 @@ async function generateSummary(text) {
         // Return the result
         return textResult;
     } catch (error) {
-        console.error('Error extracting content or calling API:', error);
+        console.error('Error summarizing or calling API:', error);
+        return { error: error.message };
+    }
+}
+
+async function getModels() {
+    try {
+        const litellmUrl = litellmUrlInput.value;
+        const token = tokenInput.value;
+        console.log("Getting LiteLLM models...");
+        const response = await fetch(`${litellmUrl}/models?return_wildcard_routes=false&include_model_access_groups=false`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
+        })
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // Parse the response
+        const result = await response.json();
+        return result
+    } catch (error) {
+        console.error('Error getting models or calling API:', error);
         return { error: error.message };
     }
 }
