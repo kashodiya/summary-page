@@ -93,10 +93,17 @@ document.getElementById('getSummaryButton').addEventListener('click', async () =
     console.log("Btn clicked...");
     // Send a message to the background script
     chrome.runtime.sendMessage({ action: "getText" }, async (response) => {
-        console.log("Response from background script: " + response.text);
-        showSummary('Loading...');
-        let summary = await generateSummary(response.text);
-        showSummary(summary);
+        updateWarning('');
+        if(response.text){
+            console.log("Response from background script: " + response.text);
+            showSummary('Loading...');
+            let summary = await generateSummary(response.text);
+            if(summary.error){
+                updateWarning(summary.error);
+            }else{
+                showSummary(summary);
+            }
+        }
     });
 });
 
@@ -159,7 +166,7 @@ async function showSummary(text) {
 
 async function generateSummary(text) {
     try {
-
+        updateWarning('');
         const litellmUrl = litellmUrlInput.value;
         const token = tokenInput.value;
         const modelId = modelIdDropdown.value;
@@ -184,7 +191,9 @@ async function generateSummary(text) {
         })
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            let error = `HTTP error! status: ${response.status}`
+            updateWarning(error);
+            throw new Error(error);
         }
 
         // Parse the response
@@ -195,13 +204,16 @@ async function generateSummary(text) {
         // Return the result
         return textResult;
     } catch (error) {
-        console.error('Error summarizing or calling API:', error);
+        let errMsg = `Error summarizing or calling API: ${error}`; 
+        console.error(errMsg);
+        updateWarning(errMsg);
         return { error: error.message };
     }
 }
 
 async function getModels() {
     try {
+        updateWarning('');
         const litellmUrl = litellmUrlInput.value;
         const token = tokenInput.value;
         console.log("Getting LiteLLM models...");
@@ -214,14 +226,18 @@ async function getModels() {
         })
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            let errMsg = `HTTP error! status: ${response.status}`;
+            updateWarning(errMsg);
+            throw new Error(errMsg);
         }
 
         // Parse the response
         const result = await response.json();
         return result
     } catch (error) {
-        console.error('Error getting models or calling API:', error);
+        let errMsg = `Error getting models or calling API:: ${error}`; 
+        updateWarning(errMsg);
+        console.error(errMsg);
         return { error: error.message };
     }
 }
