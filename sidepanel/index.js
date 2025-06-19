@@ -55,6 +55,13 @@ document.getElementById('getSummaryButton').addEventListener('click', async () =
 });
 
 
+document.getElementById('textToSpeechButton').addEventListener('click', async () => {
+    let text = summaryElement.innerHTML;
+    const utterance = new SpeechSynthesisUtterance(text);
+    speechSynthesis.speak(utterance);
+});
+
+
 document.getElementById('settingsButton').addEventListener('click', async () => {
     if (isSettingsVisible) {
         settingsSection.style.display = 'none';
