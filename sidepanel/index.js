@@ -6,6 +6,7 @@ const summaryElement = document.body.querySelector('#summary');
 const warningElement = document.body.querySelector('#warning');
 const settingsSection = document.body.querySelector('#settingsSection');
 let isSettingsVisible = false;
+let speaking = false;
 // let isSettingsVisible = localStorage.getItem('isSettingsVisible')  === 'true';
 
 // const summaryTypeSelect = document.querySelector('#type');
@@ -56,9 +57,15 @@ document.getElementById('getSummaryButton').addEventListener('click', async () =
 
 
 document.getElementById('textToSpeechButton').addEventListener('click', async () => {
-    let text = summaryElement.innerHTML;
-    const utterance = new SpeechSynthesisUtterance(text);
-    speechSynthesis.speak(utterance);
+    if (speaking) {
+        speechSynthesis.cancel();
+        speaking = false;
+    }else{
+        let text = summaryElement.innerHTML;
+        const utterance = new SpeechSynthesisUtterance(text);
+        speechSynthesis.speak(utterance);
+        speaking = true;
+    }
 });
 
 
