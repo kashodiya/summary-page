@@ -9,7 +9,10 @@
 
 ## Settings
 - Click Settings button
-- Set values
+- Set URL, Token
+- Click (load) tiny button (next to Model ID: label)
+- Select model
+- Click Settings button
 
 ## How to use?
 - Click extension icon
