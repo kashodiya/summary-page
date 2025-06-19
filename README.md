@@ -1,4 +1,7 @@
 
+## What is this?
+- Chrome browser extension to generate summary of any web page
+
 ## What you need?
 - LiteLLM server
 - LiteLLM Token
