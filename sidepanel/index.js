@@ -61,7 +61,21 @@ document.getElementById('textToSpeechButton').addEventListener('click', async ()
         speechSynthesis.cancel();
         speaking = false;
     }else{
-        let text = summaryElement.innerHTML;
+        let text = "";
+
+        if (window.getSelection) {
+            text = window.getSelection().toString();
+        } else if (document.selection && document.selection.type !== 'Control') {
+            text = document.selection.createRange().text;
+        }
+
+        if(text === ""){
+            console.log("Using full summary for speak");
+            text = summaryElement.innerHTML;
+        }else{
+            console.log("Using selected text for speak");
+        }
+
         const utterance = new SpeechSynthesisUtterance(text);
         speechSynthesis.speak(utterance);
         speaking = true;

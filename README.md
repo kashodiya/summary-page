@@ -23,5 +23,6 @@
 - If you are on YouTube page, it will generate summary from the transcript of your video!
 
 ## Summary to speech
-- Click Speak button to read summary loud.
+- Click Speak button to hear the summary.
 - To stop, click button again.
+- If you want to hear only part of the summary, select whatever you want and click Speak button.
