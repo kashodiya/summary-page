@@ -61,17 +61,57 @@ function getSelectedText() {
 	return selectedText;
 }
 
+async function fetchTranscript() {
+    if (!window.location.href.includes('youtube.com/watch')) {
+        console.log('This script only works on YouTube video pages.');
+        return null;
+    }
 
-(function () {
+    const videoId = new URLSearchParams(window.location.search).get('v');
+    if (!videoId) {
+        console.log('Could not find video ID.');
+        return null;
+    }
+
+    // Find the transcript button and click it if it's not already open
+    const transcriptButton = document.querySelector('button[aria-label="Show transcript"]');
+    if (transcriptButton) {
+        transcriptButton.click();
+    }
+
+    // Wait for the transcript to load
+    await new Promise(resolve => setTimeout(resolve, 2000)); // 2 second delay
+
+    const transcriptElements = document.querySelectorAll('yt-formatted-string.ytd-transcript-segment-renderer');
+    if (transcriptElements.length === 0) {
+        console.log('Transcript not found. It may not be available for this video.');
+        return null;
+    }
+
+    let fullTranscript = '';
+    transcriptElements.forEach(element => {
+        fullTranscript += element.textContent + ' ';
+    });
+
+    return fullTranscript.trim();
+}
+
+
+(async function () {
 	let mainData = '';
-	const selectedText = getSelectedText();
-	if (selectedText.length > 0) {
-		console.log('Text is selected.');
-		mainData = selectedText;
-	} else {
-		console.log('No text is selected.');
-		mainData = extractMainText()
-	}
+
+    if(window.location.hostname.includes('youtube.com')){
+        mainData = await fetchTranscript();
+    }else{
+        const selectedText = getSelectedText();
+        if (selectedText.length > 0) {
+            console.log('Text is selected.');
+            mainData = selectedText;
+        } else {
+            console.log('No text is selected.');
+            mainData = extractMainText()
+        }
+    }
 
 	console.log(mainData);
 	return mainData;
