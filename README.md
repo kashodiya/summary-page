@@ -21,3 +21,7 @@
 
 ## YouTube?
 - If you are on YouTube page, it will generate summary from the transcript of your video!
+
+## Summary to speech
+- Click Speak button to read summary loud.
+- To stop, click button again.
