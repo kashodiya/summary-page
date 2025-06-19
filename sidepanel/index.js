@@ -44,6 +44,11 @@ promptInput.addEventListener('input', () => {
     localStorage.setItem('prompt', promptInput.value);
 });
 
+document.getElementById('resetPromptButton').addEventListener('click', async () => {
+    promptInput.value = "Generate short summary of following in simple English";
+    localStorage.setItem('prompt', promptInput.value);
+});
+
 document.getElementById('getSummaryButton').addEventListener('click', async () => {
     console.log("Btn clicked...");
     // Send a message to the background script

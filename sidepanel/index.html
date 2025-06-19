@@ -41,6 +41,16 @@
     #settingsSection{
       display: none;
     }
+
+    #resetPromptButton{
+      margin-left: 20px;
+    }
+
+    #resetPromptButton:hover{
+      cursor: pointer;
+      background-color: bisque;
+    }
+
   </style>
 </head>
 
@@ -58,7 +68,7 @@
     <input type="password" id="token" placeholder="Your LiteLLM API token" />
     <label for="modelId">Model ID:</label>
     <input type="text" id="modelId" placeholder="ID of the LiteLLM model to use" />
-    <label for="prompt">Input Prompt:</label>
+    <label for="prompt">Input Prompt:<span id="resetPromptButton">(reset)</span></label>
     <input type="text" id="prompt" placeholder="Generate short summary of following in simple English" />
   </div>
 
