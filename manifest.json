@@ -19,5 +19,14 @@
       "128": "images/icon128.png"
     },
     "default_title": "Generate a summary"
+  },
+  "commands": {
+    "generate-summary": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+S",
+        "mac": "Command+Shift+S"
+      },
+      "description": "Open the extension's popup"
+    }
   }
 }

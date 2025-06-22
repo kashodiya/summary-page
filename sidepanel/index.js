@@ -24,12 +24,19 @@ const promptInput = document.getElementById('prompt');
 litellmUrlInput.value = localStorage.getItem('litellmUrl') || '';
 tokenInput.value = localStorage.getItem('token') || '';
 modelIdDropdown.value = localStorage.getItem('modelId') || '';
-promptInput.value = localStorage.getItem('prompt') || "Generate short summary of following in simple English";
+promptInput.value = localStorage.getItem('prompt') || "Generate summary of following in simple English";
 
 const modelsTxt = localStorage.getItem('models');
 // let models;
 let models = JSON.parse(modelsTxt);
 populateModelDropdown()
+
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('Site panel content has loaded');
+    chrome.runtime.sendMessage({ action: "side-panel-opened" }, async (response) => {
+        console.log('Sent message side-panel-opened');
+    });
+});
 
 // Listen for changes in the input fields and update session storage
 litellmUrlInput.addEventListener('input', () => {
@@ -61,25 +68,25 @@ document.getElementById('loadModelsButton').addEventListener('click', async () =
 
     while (modelIdDropdown.options.length > 0) {
         modelIdDropdown.remove(0);
-    }    
+    }
     populateModelDropdown();
 });
 
-function populateModelDropdown(){
-    if(!models){
+function populateModelDropdown() {
+    if (!models) {
         console.log('Models not found in local storage');
         return;
     }
     let modelId = localStorage.getItem('modelId');
     console.log(`Creating model dropdown with value: ${modelId}`);
-    
+
     models.data.forEach(function (model) {
         var option = document.createElement("option");
         option.value = model.id;
         option.text = model.id;
         if (model.id === modelId) {
             option.selected = true;
-        }        
+        }
         modelIdDropdown.appendChild(option);
     });
 }
@@ -89,23 +96,39 @@ document.getElementById('resetPromptButton').addEventListener('click', async () 
     localStorage.setItem('prompt', promptInput.value);
 });
 
+
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+    if (message.action === 'closeSidePanel') {
+        window.close();
+        sendResponse({ success: true }); // Send an empty response
+    }else if (message.action === 'generate-summary-now') {
+        console.log("Got message: generate-summary-now, doing initGenerateSummary()...");
+        await initGenerateSummary();
+        sendResponse({ success: true }); // Send an empty response
+    }
+});
+
 document.getElementById('getSummaryButton').addEventListener('click', async () => {
-    console.log("Btn clicked...");
+    console.log("Btn getSummaryButton clicked...");
+    await initGenerateSummary();
+});
+
+async function initGenerateSummary(){
     // Send a message to the background script
     chrome.runtime.sendMessage({ action: "getText" }, async (response) => {
         updateWarning('');
-        if(response.text){
+        if (response.text) {
             console.log("Response from background script: " + response.text);
             showSummary('Loading...');
             let summary = await generateSummary(response.text);
-            if(summary.error){
+            if (summary.error) {
                 updateWarning(summary.error);
-            }else{
+            } else {
                 showSummary(summary);
             }
         }
     });
-});
+}
 
 
 document.getElementById('textToSpeechButton').addEventListener('click', async () => {
@@ -204,7 +227,7 @@ async function generateSummary(text) {
         // Return the result
         return textResult;
     } catch (error) {
-        let errMsg = `Error summarizing or calling API: ${error}`; 
+        let errMsg = `Error summarizing or calling API: ${error}`;
         console.error(errMsg);
         updateWarning(errMsg);
         return { error: error.message };
@@ -235,7 +258,7 @@ async function getModels() {
         const result = await response.json();
         return result
     } catch (error) {
-        let errMsg = `Error getting models or calling API:: ${error}`; 
+        let errMsg = `Error getting models or calling API:: ${error}`;
         updateWarning(errMsg);
         console.error(errMsg);
         return { error: error.message };
