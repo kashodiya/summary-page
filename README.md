@@ -7,6 +7,11 @@
 - LiteLLM Token
 - Model ID
 
+## How to install?
+- Git clone
+- Enable Chrome Extension developer mode
+- Load unpacked extension pointing to the folder of cloned project
+
 ## Settings
 - Click Settings button
 - Set URL, Token
@@ -17,6 +22,10 @@
 ## How to use?
 - Click extension icon
 - Hit Get summary button
+
+## Shortcut key
+- Cmd+Shift+S (or Ctrl+Shift+S on windows) will open the side panel and start doing summary
+- Pressing same keys again will close the side panel (like a toggle switch)
 
 ## Summary of selected text only?
 - Select text on the page
